@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.Serializable
+import ui.extensions.remove
 import ui.theme.Spacing
 
 @Serializable
@@ -104,17 +105,18 @@ data class PlatedVehicle(
 ) {
     companion object {
         fun getFormattedLicensePlate(unformattedLicensePlate: String): String {
-            val formattedLicensePlate = unformattedLicensePlate.uppercase()
+            val formattedLicensePlate = unformattedLicensePlate.uppercase().remove("-")
 
             val licensePlateSideCode = this.getSideCode(formattedLicensePlate)
 
             return when (licensePlateSideCode) {
-                1, 2, 3, 4, 5 -> "${formattedLicensePlate.substring(0, 2)}-${
-                    formattedLicensePlate.substring(
-                        2,
-                        4
-                    )
-                }-${formattedLicensePlate.substring(4)}"
+                1, 2, 3, 4, 5 ->
+                    "${formattedLicensePlate.substring(0, 2)}-${
+                        formattedLicensePlate.substring(
+                            2,
+                            4
+                        )
+                    }-${formattedLicensePlate.substring(4)}"
 
                 6 -> "${formattedLicensePlate.substring(0, 2)}-${
                     formattedLicensePlate.substring(
@@ -181,15 +183,12 @@ data class PlatedVehicle(
                 13 to "^[0-9]{3}[a-zA-Z]{2}[0-9]{1}$"       // 14 999-XX-9
             )
 
-            return patterns.entries.firstOrNull {
-                Regex(it.value).matches(
-                    licensePlate.replace(
-                        "-",
-                        ""
-                    )
-                )
-            }?.key
-                ?: -2
+            return patterns
+                .entries
+                .firstOrNull {
+                    Regex(it.value)
+                        .matches(licensePlate.remove("-"))
+                }?.key ?: -2
         }
     }
 }

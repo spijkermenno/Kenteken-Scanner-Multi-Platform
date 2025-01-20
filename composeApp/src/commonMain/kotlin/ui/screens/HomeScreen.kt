@@ -1,7 +1,9 @@
 package ui.screens
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +38,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
+import domain.ktor.client
+import io.ktor.client.request.get
 import kotlinx.coroutines.launch
 import presentation.HomeScreenEvent
 import presentation.PlatedVehicleViewModel
@@ -47,10 +51,19 @@ import ui.theme.Spacing
 class HomeScreen(private val platedVehicleViewModel: PlatedVehicleViewModel) : Screen {
 
     init {
-        platedVehicleViewModel.getPlatedVehicle("79rkn7")
+        //platedVehicleViewModel.getPlatedVehicle("3tkh03")
     }
 
-    @OptIn(ExperimentalMaterialApi::class)
+    private suspend fun testInternetConnection(): Exception? {
+        try {
+            client.get("https://google.com/")
+            return null
+        } catch (e: Exception) {
+            return Exception("There is something wrong with your internet connection.")
+        }
+    }
+
+    @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
         val event = platedVehicleViewModel.event.collectAsState()
@@ -58,6 +71,12 @@ class HomeScreen(private val platedVehicleViewModel: PlatedVehicleViewModel) : S
         val scope = rememberCoroutineScope()
 
         val snackBarHostState = remember { SnackbarHostState() }
+
+        scope.launch {
+            testInternetConnection()?.let {
+                snackBarHostState.showSnackbar(it.message ?: "Something went wrong.")
+            }
+        }
 
         Scaffold(
             snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
@@ -91,14 +110,18 @@ class HomeScreen(private val platedVehicleViewModel: PlatedVehicleViewModel) : S
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.White)
                         .padding(vertical = Spacing.Small.dp)
-                        .padding(horizontal = Spacing.Large.dp),
+                        .padding(horizontal = Spacing.Large.dp)
+                        .combinedClickable(
+                            onClick = { focusManager.clearFocus(true) },
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                        ),
                     verticalArrangement = Arrangement.spacedBy(Spacing.Small.dp)
                 ) {
                     Spacer(Modifier.height(Spacing.Small.dp))
 
-                    SearchField {
+                    LicensePlateSearchField {
                         focusManager.clearFocus(true)
                         platedVehicleViewModel.getPlatedVehicle(it)
                     }
@@ -150,7 +173,7 @@ class HomeScreen(private val platedVehicleViewModel: PlatedVehicleViewModel) : S
 }
 
 @Composable
-fun SearchField(
+fun LicensePlateSearchField(
     modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
     onValidLicensePlate: (String) -> Unit

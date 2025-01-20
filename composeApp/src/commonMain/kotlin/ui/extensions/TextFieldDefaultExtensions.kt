@@ -9,5 +9,7 @@ fun TextFieldDefaults.transparent() = this.textFieldColors(
     backgroundColor = Color.Transparent,
     focusedIndicatorColor = Color.Transparent,
     unfocusedIndicatorColor = Color.Transparent,
-    disabledIndicatorColor = Color.Transparent
+    disabledIndicatorColor = Color.Transparent,
+    cursorColor = Color.Gray,
+    textColor = Color.Black
 )

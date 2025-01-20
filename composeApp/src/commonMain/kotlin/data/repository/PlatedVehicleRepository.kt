@@ -10,11 +10,15 @@ import io.ktor.client.request.url
 
 class AppPlatedVehicleRepository : PlatedVehicleRepository {
     override suspend fun getPlatedVehicle(licensePlate: String): Result<PlatedVehicle> {
-        val response = client.get {
-            url("api-endpoint/$licensePlate")
-        }.validate<PlatedVehicle>()
+        try {
+            val response = client.get {
+                url("api-endpoint/$licensePlate")
+            }.validate<PlatedVehicle>()
 
-        return response
+            return response
+        } catch (e: Exception) {
+            return Result.Error(e)
+        }
     }
 
     override suspend fun getRecentPlatedVehicles(): List<PlatedVehicle> {

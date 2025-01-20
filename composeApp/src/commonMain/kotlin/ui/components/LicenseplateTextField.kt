@@ -1,5 +1,6 @@
 package ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -26,6 +27,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import data.model.PlatedVehicle
+import kentekenscanner.composeapp.generated.resources.European_stars
+import kentekenscanner.composeapp.generated.resources.Res
+import org.jetbrains.compose.resources.painterResource
 import toSp
 import ui.extensions.transparent
 
@@ -42,7 +46,7 @@ fun LicensePlateTextField(
             .fillMaxWidth()
             .aspectRatio(4.73f)
             .clip(MaterialTheme.shapes.large)
-            .background(color = MaterialTheme.colors.primary)
+            .background(color = MaterialTheme.colors.onPrimary)
     ) {
         var licensePlateText by remember { mutableStateOf(value) }
         val boxWidth = this.maxWidth
@@ -53,8 +57,16 @@ fun LicensePlateTextField(
                 Modifier
                     .fillMaxHeight()
                     .width(europeBoxWidth)
-                    .background(MaterialTheme.colors.secondary)
-            )
+                    .background(MaterialTheme.colors.secondary),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(Res.drawable.European_stars),
+                    contentDescription = "Europe stars",
+                    modifier = Modifier.fillMaxSize(0.8f)
+                )
+            }
+
             val fontSize = (this@BoxWithConstraints.maxHeight * 0.5f).toSp()
             val lineHeight = (this@BoxWithConstraints.maxHeight).toSp()
 
@@ -79,7 +91,8 @@ fun LicensePlateTextField(
                             modifier = Modifier.fillMaxSize(),
                             fontSize = fontSize,
                             textAlign = TextAlign.Center,
-                            lineHeight = 2.sp
+                            lineHeight = 2.sp,
+                            color = MaterialTheme.colors.primaryVariant
                         )
                     },
                     textStyle = TextStyle(

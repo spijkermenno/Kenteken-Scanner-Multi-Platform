@@ -15,7 +15,7 @@ import ui.theme.Spacing
 class RecentSearchedLicensePlatesScreen(private val onLicensePlateClick: (String) -> Unit) :
     Screen {
     private val licensePlateList = listOf(
-        "3-TKH-03",
+        "TD-596-X",
         "79-RKN-7",
         "31-SL-DL",
         "X-TKH-03",

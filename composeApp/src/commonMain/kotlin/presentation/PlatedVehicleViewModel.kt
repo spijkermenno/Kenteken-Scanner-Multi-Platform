@@ -8,6 +8,7 @@ import domain.ktor.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import ui.extensions.remove
 
 class PlatedVehicleViewModel(
     private val platedVehicleRepository: AppPlatedVehicleRepository
@@ -23,9 +24,11 @@ class PlatedVehicleViewModel(
 
         screenModelScope.launch {
             when (val result = platedVehicleRepository.getPlatedVehicle(
-                licensePlate.replace("-", "").lowercase()
+                licensePlate.remove("-").lowercase()
             )) {
                 is Result.Error -> {
+                    result.exception.printStackTrace()
+
                     _event.value =
                         HomeScreenEvent.Error(message = "There was a problem while fetch the vehicle.")
                 }

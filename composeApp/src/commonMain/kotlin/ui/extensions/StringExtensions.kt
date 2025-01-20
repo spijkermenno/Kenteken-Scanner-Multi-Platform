@@ -20,3 +20,11 @@ fun String.formatDateFromString(): String {
     val monthName = localDate.month.name.lowercase().replaceFirstChar { it.uppercase() }
     return "${localDate.dayOfMonth} $monthName ${localDate.year}"
 }
+
+fun String.remove(char: Char): String {
+    return this.filter { it != char }
+}
+
+fun String.remove(string: String): String {
+    return this.replace(string, "")
+}
